@@ -7,7 +7,7 @@ class Node:
         self.threshold = threshold
         self.left = left
         self.right = right
-        self.value = None
+        self.value = value
 
     def is_leaf_node(self):
         return self.value is not None
@@ -63,7 +63,7 @@ class DecisionTree:
     def _information_gain(self, y, X_column, threshold):
         parent_entropy = self._entropy(y)
 
-        left_idxs, right_idxs = self.split(X_column, threshold)
+        left_idxs, right_idxs = self._split(X_column, threshold)
 
         if len(left_idxs) == 0 or len(right_idxs) == 0:
             return 0
@@ -86,7 +86,7 @@ class DecisionTree:
         right_idxs = np.argwhere(X_column>threshold).flatten()
         return left_idxs, right_idxs
 
-    def _most_common_label(y):
+    def _most_common_label(self, y):
         counter = Counter(y)
         value = counter.most_common(1)[0][0]
         return value
@@ -94,9 +94,9 @@ class DecisionTree:
     def predict(self, X):
         return np.array([self._traverse_tree(x, self.root) for x in X])
     
-    def _traverse_array(self, x, node):
+    def _traverse_tree(self, x, node):
         if node.is_leaf_node():
-            return node.value()
+            return node.value
         
         if x[node.feature] <= node.threshold:
             return self._traverse_tree(x, node.left)
